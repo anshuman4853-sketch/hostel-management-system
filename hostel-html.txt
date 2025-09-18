@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hostel Management System</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      overflow-x: hidden;
+    }
+
+    /* Toggle button */
+    .toggle-btn {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      font-size: 24px;
+      background: #1e3a5f;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -240px;
+      width: 220px;
+      height: 100%;
+      background: #1e3a5f;
+      color: white;
+      padding-top: 60px;
+      transition: 0.3s ease;
+      z-index: 1000;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .sidebar a {
+      display: block;
+      color: white;
+      padding: 12px 20px;
+      text-decoration: none;
+    }
+
+    .sidebar a:hover {
+      background: #162d4a;
+    }
+
+    /* Main content */
+    .content {
+      padding: 20px;
+      margin-top: 60px;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* Login Page */
+    .login-box {
+      max-width: 350px;
+      margin: 80px auto;
+      background: #e3edf7;
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .login-box h1 {
+      margin-bottom: 20px;
+    }
+
+    .login-box input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .login-box button {
+      background: #1e3a5f;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    /* Chat Box */
+    .chat-box {
+      margin-top: 15px;
+      max-height: 360px;
+      overflow-y: auto;
+      padding-bottom: 10px;
+    }
+
+    .chat-message {
+      background: #f1f1f1;
+      margin: 10px 0;
+      padding: 10px 15px;
+      border-radius: 12px;
+      max-width: 70%;
+    }
+
+    .chat-user {
+      font-weight: bold;
+      color: #1e3a5f;
+      margin-bottom: 5px;
+    }
+
+    .chat-text {
+      font-size: 14px;
+      margin-bottom: 5px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .chat-time {
+      font-size: 12px;
+      color: gray;
+      text-align: right;
+    }
+
+    .chat-input {
+      display: flex;
+      margin-top: 15px;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      outline: none;
+    }
+
+    .chat-input button {
+      background: #1e3a5f;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 50%;
+      margin-left: 8px;
+      cursor: pointer;
+    }
+
+    /* General Form Styling */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* Specific Page Containers */
+    .rating-container,
+    .room-container,
+    .complaints-container {
+      max-width: 500px;
+      margin: 50px auto;
+      padding: 25px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .rating-container h1,
+    .room-container h1,
+    .complaints-container h1 {
+      font-size: 28px;
+      text-align: center;
+    }
+
+    .rating-star,
+    .room-icon {
+      font-size: 30px;
+      margin-right: 10px;
+    }
+
+    .room-container h2 {
+      margin-top: 30px;
+    }
+
+    /* File Upload Customization */
+    .file-upload {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .file-label {
+      background: #f1f1f1;
+      padding: 8px 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    #file-name {
+      margin-left: 10px;
+      color: #555;
+      font-style: italic;
+    }
+
+    /* Submit Button Styling */
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #1e3a5f;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .submit-btn:hover {
+      background: #162d4a;
+    }
+
+    hr {
+      border: 0;
+      height: 1px;
+      background: #eee;
+      margin: 25px 0;
+    }
+
+    .complaints-container textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      margin-bottom: 15px;
+    }
+
+    .complaints-container ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .complaints-container li {
+      margin-bottom: 8px;
+    }
+
+    .complaints-container h3 {
+      margin-top: 30px;
+    }
+
+    /* New styles for the rating system */
+    .stars {
+      display: flex;
+      justify-content: center;
+      font-size: 36px;
+      margin: 20px 0;
+    }
+
+    .star {
+      color: #ccc;
+      cursor: pointer;
+      transition: color 0.2s ease;
+      user-select: none;
+    }
+
+    .star.active {
+      color: #ffc107;
+    }
+
+    #rating-text {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: #555;
+    }
+
+    /* small responsiveness */
+    @media (max-width: 600px) {
+      .sidebar { width: 200px; left: -200px; }
+      .sidebar.active { left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <button class="toggle-btn" aria-label="Open menu">☰</button>
+
+  <nav class="sidebar" id="sidebar" aria-hidden="true">
+    <h2>Menu</h2>
+    <a href="#" data-page="login">Login</a>
+    <a href="#" data-page="official">Official Talk</a>
+    <a href="#" data-page="unofficial">Unofficial Talk</a>
+    <a href="#" data-page="rating">Rating System</a>
+    <a href="#" data-page="complaints">Complaints & Suggestions</a>
+    <a href="#" data-page="room">Room Change & Lost & Found</a>
+    <a href="#" data-page="login">Log Out</a>
+  </nav>
+
+  <main class="content" id="content">
+    <section id="login" class="page active">
+      <div class="login-box">
+        <h1>🏠 Hostel Login</h1>
+        <input type="text" placeholder="Username">
+        <input type="password" placeholder="Password">
+        <button>Login</button>
+      </div>
+    </section>
+
+    <section id="official" class="page" aria-hidden="true">
+      <h1>📢 Official Talk</h1>
+      <div class="chat-box" id="official-chat">
+        <div class="chat-message">
+          <div class="chat-user">Warden</div>
+          <div class="chat-text">Gather all students by 9 PM on hostel ground.</div>
+          <div class="chat-time">8:00 PM</div>
+        </div>
+        <div class="chat-message">
+          <div class="chat-user">Mess Manager</div>
+          <div class="chat-text">Tonight special dinner will be served at 8:30 PM.</div>
+          <div class="chat-time">8:10 PM</div>
+        </div>
+        <div class="chat-message">
+          <div class="chat-user">Sports Incharge</div>
+          <div class="chat-text">Cricket match scheduled for Saturday at hostel ground.</div>
+          <div class="chat-time">8:20 PM</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="unofficial" class="page" aria-hidden="true">
+      <h1>💬 Unofficial Talk</h1>
+      <div class="chat-box" id="unofficial-chat">
+        <div class="chat-message">
+          <div class="chat-user">Raj</div>
+          <div class="chat-text">Hi everyone, meeting postponed.</div>
+          <div class="chat-time">8:05 PM</div>
+        </div>
+        <div class="chat-message">
+          <div class="chat-user">Keshav</div>
+          <div class="chat-text">Really? That’s good, I had extra work.</div>
+          <div class="chat-time">8:08 PM</div>
+        </div>
+        <div class="chat-message">
+          <div class="chat-user">Aditya</div>
+          <div class="chat-text">Okay, so now we can chill for the evening 😅</div>
+          <div class="chat-time">8:12 PM</div>
+        </div>
+        <div class="chat-message">
+          <div class="chat-user">Pooja</div>
+          <div class="chat-text">Anyone joining for a late night study session?</div>
+          <div class="chat-time">8:18 PM</div>
+        </div>
+      </div>
+
+      <div class="chat-input">
+        <input id="unofficial-input" type="text" placeholder="Send a message">
+        <button id="unofficial-send" type="button">➤</button>
+      </div>
+    </section>
+
+    <section id="rating" class="page" aria-hidden="true">
+      <div class="rating-container">
+        <h1><span class="rating-star">⭐</span> Rating System</h1>
+        <p>Rate hostel mess service:</p>
+        <div class="stars" id="rating-stars">
+          <span class="star" data-value="1">★</span>
+          <span class="star" data-value="2">★</span>
+          <span class="star" data-value="3">★</span>
+          <span class="star" data-value="4">★</span>
+          <span class="star" data-value="5">★</span>
+        </div>
+        <p id="rating-text">You rated: 0 star(s)</p>
+        <button id="rating-submit" class="submit-btn" type="button">Submit</button>
+      </div>
+    </section>
+
+    <section id="complaints" class="page" aria-hidden="true">
+      <div class="complaints-container">
+        <h1>📝 Complaints & Suggestions</h1>
+        <div class="form-group">
+          <textarea id="complaint-text" placeholder="Write your complaint..." rows="4"></textarea>
+        </div>
+        <div class="form-group">
+          <textarea id="suggestion-text" placeholder="Write your suggestion..." rows="3"></textarea>
+        </div>
+        <button class="submit-btn" id="complaint-submit">Submit</button>
+        <h3>📞 Hostel Contacts:</h3>
+        <ul>
+          <li>Warden: 9876543210</li>
+          <li>Mess Manager: 9123456780</li>
+          <li>Security Guard: 9000000000</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="room" class="page" aria-hidden="true">
+      <div class="room-container">
+        <h1><span class="room-icon">🏠</span> Room Change & Lost & Found</h1>
+
+        <h2>Room Change Request</h2>
+        <div class="form-group">
+          <input id="room-name" type="text" placeholder="Enter your name, current room number and desired room number...">
+        </div>
+        <div class="form-group">
+          <input id="room-reason" type="text" placeholder="Reason for room change...">
+        </div>
+        <button class="submit-btn" id="room-submit">Submit Room Change Request</button>
+
+        <hr>
+
+        <h2>Lost & Found</h2>
+        <p>Upload lost item photo:</p>
+        <div class="file-upload">
+          <input type="file" id="lost-item-photo" hidden>
+          <label for="lost-item-photo" class="file-label">Choose file</label>
+          <span id="file-name">No file chosen</span>
+        </div>
+        <div class="form-group">
+          <textarea id="lost-desc" placeholder="Describe your lost item..."></textarea>
+        </div>
+        <button class="submit-btn" id="lost-submit">Submit Lost Item</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Keep everything inside DOMContentLoaded to avoid selection-before-ready issues.
+    document.addEventListener('DOMContentLoaded', function () {
+      // Elements
+      const sidebar = document.getElementById('sidebar');
+      const toggleBtn = document.querySelector('.toggle-btn');
+      const sidebarLinks = document.querySelectorAll('.sidebar a[data-page]');
+      const pages = document.querySelectorAll('.page');
+
+      // Toggle sidebar
+      function toggleMenu() {
+        const isActive = sidebar.classList.toggle('active');
+        sidebar.setAttribute('aria-hidden', !isActive);
+      }
+      // expose to window if some old inline handlers attempt to call it (defensive)
+      window.toggleMenu = toggleMenu;
+      toggleBtn.addEventListener('click', toggleMenu);
+
+      // Close sidebar when clicking outside it (mobile-friendly)
+      document.addEventListener('click', (e) => {
+        const clickedInsideSidebar = sidebar.contains(e.target) || toggleBtn.contains(e.target);
+        if (!clickedInsideSidebar && sidebar.classList.contains('active')) {
+          sidebar.classList.remove('active');
+          sidebar.setAttribute('aria-hidden', 'true');
+        }
+      });
+
+      // Page switcher
+      function showPage(pageId) {
+        pages.forEach(p => {
+          if (p.id === pageId) {
+            p.classList.add('active');
+            p.removeAttribute('aria-hidden');
+          } else {
+            p.classList.remove('active');
+            p.setAttribute('aria-hidden', 'true');
+          }
+        });
+      }
+
+      // Attach clicks on sidebar links
+      sidebarLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const page = link.dataset.page;
+          showPage(page);
+          // auto-close sidebar on link click for mobile UX
+          sidebar.classList.remove('active');
+          sidebar.setAttribute('aria-hidden', 'true');
+        });
+      });
+
+      // === Chat (Unofficial) ===
+      const chatInput = document.getElementById('unofficial-input');
+      const chatBtn = document.getElementById('unofficial-send');
+      const chatBox = document.getElementById('unofficial-chat');
+
+      function sendChatMessage() {
+        const text = chatInput.value.trim();
+        if (!text) return;
+        const msg = document.createElement('div');
+        msg.className = 'chat-message';
+
+        const user = document.createElement('div');
+        user.className = 'chat-user';
+        user.textContent = 'You';
+
+        const body = document.createElement('div');
+        body.className = 'chat-text';
+        body.textContent = text;
+
+        const time = document.createElement('div');
+        time.className = 'chat-time';
+        time.textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+
+        msg.appendChild(user);
+        msg.appendChild(body);
+        msg.appendChild(time);
+
+        chatBox.appendChild(msg);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        chatInput.value = '';
+        chatInput.focus();
+      }
+
+      chatBtn.addEventListener('click', sendChatMessage);
+      chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendChatMessage(); });
+
+      // === Rating System ===
+      const ratingStars = document.querySelectorAll('#rating .star');
+      const ratingText = document.getElementById('rating-text');
+      let currentRating = 0;
+
+      // Load saved rating if exists
+      try {
+        const saved = localStorage.getItem('hostelRating');
+        if (saved) currentRating = parseInt(saved, 10) || 0;
+      } catch (err) {
+        currentRating = 0;
+      }
+
+      function updateStars() {
+        ratingStars.forEach(star => {
+          const val = parseInt(star.dataset.value, 10);
+          if (val <= currentRating) {
+            star.classList.add('active');
+          } else {
+            star.classList.remove('active');
+          }
+        });
+        ratingText.textContent = `You rated: ${currentRating} star(s)`;
+      }
+
+      function highlightStars(value) {
+        ratingStars.forEach(star => {
+          const val = parseInt(star.dataset.value, 10);
+          if (val <= value) star.classList.add('active');
+          else star.classList.remove('active');
+        });
+      }
+
+      ratingStars.forEach(star => {
+        const val = parseInt(star.dataset.value, 10);
+        star.addEventListener('click', () => {
+          currentRating = val;
+          try { localStorage.setItem('hostelRating', String(currentRating)); } catch (err) {}
+          updateStars();
+        });
+        star.addEventListener('mouseover', () => highlightStars(val));
+        star.addEventListener('mouseout', updateStars);
+      });
+
+      // Save on submit button (optional)
+      const ratingSubmit = document.getElementById('rating-submit');
+      if (ratingSubmit) {
+        ratingSubmit.addEventListener('click', () => {
+          alert(`Thanks — you rated ${currentRating} star(s).`);
+          try { localStorage.setItem('hostelRating', String(currentRating)); } catch (err) {}
+        });
+      }
+
+      // === File upload display ===
+      const lostInput = document.getElementById('lost-item-photo');
+      const fileNameSpan = document.getElementById('file-name');
+      if (lostInput) {
+        lostInput.addEventListener('change', () => {
+          if (lostInput.files && lostInput.files.length > 0) {
+            fileNameSpan.textContent = lostInput.files[0].name;
+          } else {
+            fileNameSpan.textContent = 'No file chosen';
+          }
+        });
+      }
+
+      // Initialize UI
+      updateStars();
+      showPage('login');
+    });
+  </script>
+</body>
+</html>
